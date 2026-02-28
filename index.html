@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Branded Preamble PDF Tool</title>
+    <link rel="stylesheet" href="./theme.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-title">
+        <div class="app-title__name">Branded Preamble PDF Tool</div>
+        <div class="app-title__hint">Paste Markdown -> Preview pages -> Print/Save as PDF (A4)</div>
+      </div>
+      <div class="app-actions">
+        <button id="btn-print" class="btn btn-primary" type="button">Print / Save as PDF</button>
+        <button id="btn-copy-normalized" class="btn" type="button">Copy Normalized Markdown</button>
+      </div>
+    </header>
+
+    <main class="app">
+      <section class="panel panel-left" aria-label="Markdown input">
+        <div class="panel__header">
+          <div class="panel__title">Markdown</div>
+          <div class="panel__subtitle">Page-based markdown + legacy compatibility</div>
+        </div>
+        <textarea id="md-input" class="editor" spellcheck="false"></textarea>
+        <div class="panel__footer">
+          <details class="help" open>
+            <summary>Expected structure (recommended)</summary>
+            <pre class="help__code"><code>---
+title: "My Topic"
+date: "2026-02-28"
+author: "Anton Titov"
+subtitle: "Optional deck subtitle"
+---
+
+## Cover
+Lead paragraph...
+### Key Stats
+- **42%**: Adoption grew YoY
+
+## The Core Problem
+Opening paragraph...
+### Indicators
+- **$120B**: Trade finance gap
+</code></pre>
+          </details>
+        </div>
+      </section>
+
+      <section class="panel panel-right" aria-label="Preview">
+        <div class="panel__header">
+          <div class="panel__title">Deck Preview</div>
+          <div id="warnings" class="warnings" role="status" aria-live="polite"></div>
+        </div>
+        <div class="deck-toolbar">
+          <button id="btn-prev" class="btn" type="button">Prev</button>
+          <div class="deck-toolbar__meta">
+            <div id="page-label" class="deck-toolbar__label">Page</div>
+            <div id="page-indicator" class="deck-toolbar__indicator">0 / 0</div>
+          </div>
+          <button id="btn-next" class="btn" type="button">Next</button>
+        </div>
+        <div class="preview-wrap">
+          <div class="print-header" id="print-header"></div>
+          <div id="preview" class="preview" aria-live="polite"></div>
+          <div id="print-deck" class="print-deck" aria-hidden="true"></div>
+          <div class="print-footer" id="print-footer"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
