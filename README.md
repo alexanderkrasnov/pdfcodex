@@ -8,6 +8,7 @@ Static, serverless web tool: paste Markdown, preview one page at a time like a d
 - If a page is too tall, the renderer auto-creates continuation pages.
 - Preview uses `Prev` / `Next` and keyboard left/right arrows.
 - Export still uses browser print, so the project stays Netlify-friendly and has no backend.
+- Style controls: open `Style` to toggle decorative elements (texture, rails, shadows, animations). Settings persist in your browser.
 
 ## Canonical Markdown format
 ```md

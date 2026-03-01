@@ -15,6 +15,9 @@
       <div class="app-actions">
         <button id="btn-print" class="btn btn-primary" type="button">Print / Save as PDF</button>
         <button id="btn-copy-normalized" class="btn" type="button">Copy Normalized Markdown</button>
+        <button id="btn-style" class="btn" type="button" aria-haspopup="dialog" aria-controls="style-panel">
+          Style
+        </button>
       </div>
     </header>
 
@@ -70,6 +73,49 @@ Opening paragraph...
         </div>
       </section>
     </main>
+
+    <div id="style-panel" class="style-panel" hidden role="dialog" aria-modal="true" aria-label="Style controls">
+      <div class="style-panel__card">
+        <div class="style-panel__header">
+          <div class="style-panel__title">Style Controls</div>
+          <button id="btn-style-close" class="btn" type="button">Close</button>
+        </div>
+        <div class="style-panel__body">
+          <label class="style-opt">
+            <input id="opt-app-texture" type="checkbox" />
+            <span>Background texture</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-app-gradient" type="checkbox" />
+            <span>Background gradient</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-page-accent" type="checkbox" />
+            <span>Page top accent bar</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-page-rail" type="checkbox" />
+            <span>Page left rail</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-page-shadow" type="checkbox" />
+            <span>Page shadow (preview)</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-page-caption" type="checkbox" />
+            <span>Page caption (preview)</span>
+          </label>
+          <label class="style-opt">
+            <input id="opt-animations" type="checkbox" />
+            <span>Animations</span>
+          </label>
+        </div>
+        <div class="style-panel__footer">
+          <button id="btn-style-minimal" class="btn" type="button">Minimal</button>
+          <button id="btn-style-reset" class="btn btn-primary" type="button">Reset</button>
+        </div>
+      </div>
+    </div>
 
     <script src="./app.js"></script>
   </body>

@@ -23,6 +23,18 @@ const $btnPrev = document.getElementById("btn-prev");
 const $btnNext = document.getElementById("btn-next");
 const $pageIndicator = document.getElementById("page-indicator");
 const $pageLabel = document.getElementById("page-label");
+const $btnStyle = document.getElementById("btn-style");
+const $stylePanel = document.getElementById("style-panel");
+const $btnStyleClose = document.getElementById("btn-style-close");
+const $btnStyleReset = document.getElementById("btn-style-reset");
+const $btnStyleMinimal = document.getElementById("btn-style-minimal");
+const $optAppTexture = document.getElementById("opt-app-texture");
+const $optAppGradient = document.getElementById("opt-app-gradient");
+const $optPageAccent = document.getElementById("opt-page-accent");
+const $optPageRail = document.getElementById("opt-page-rail");
+const $optPageShadow = document.getElementById("opt-page-shadow");
+const $optPageCaption = document.getElementById("opt-page-caption");
+const $optAnimations = document.getElementById("opt-animations");
 
 const state = {
   meta: { title: "", date: "", author: "", subtitle: "" },
@@ -33,6 +45,17 @@ const state = {
 };
 
 let measureHost = null;
+
+const STYLE_STORAGE_KEY = "pdfcodex.style.v1";
+const STYLE_DEFAULTS = Object.freeze({
+  appTexture: true,
+  appGradient: true,
+  pageAccent: true,
+  pageRail: true,
+  pageShadow: true,
+  pageCaption: true,
+  animations: true,
+});
 
 function todayISO() {
   const date = new Date();
@@ -55,6 +78,63 @@ function stripLinks(markdown) {
   output = output.replace(/https?:\/\/[^\s)]+/g, "");
   output = output.replace(/\bwww\.[^\s)]+/g, "");
   return output;
+}
+
+function loadStyleSettings() {
+  try {
+    const raw = window.localStorage.getItem(STYLE_STORAGE_KEY);
+    if (!raw) return { ...STYLE_DEFAULTS };
+    const parsed = JSON.parse(raw);
+    return {
+      ...STYLE_DEFAULTS,
+      ...parsed,
+    };
+  } catch {
+    return { ...STYLE_DEFAULTS };
+  }
+}
+
+function saveStyleSettings(settings) {
+  window.localStorage.setItem(STYLE_STORAGE_KEY, JSON.stringify(settings));
+}
+
+function applyStyleSettings(settings) {
+  document.body.classList.toggle("no-app-texture", !settings.appTexture);
+  document.body.classList.toggle("no-app-gradient", !settings.appGradient);
+  document.body.classList.toggle("no-page-accent", !settings.pageAccent);
+  document.body.classList.toggle("no-page-rail", !settings.pageRail);
+  document.body.classList.toggle("no-page-shadow", !settings.pageShadow);
+  document.body.classList.toggle("no-page-caption", !settings.pageCaption);
+  document.body.classList.toggle("no-animations", !settings.animations);
+}
+
+function syncStyleUI(settings) {
+  $optAppTexture.checked = Boolean(settings.appTexture);
+  $optAppGradient.checked = Boolean(settings.appGradient);
+  $optPageAccent.checked = Boolean(settings.pageAccent);
+  $optPageRail.checked = Boolean(settings.pageRail);
+  $optPageShadow.checked = Boolean(settings.pageShadow);
+  $optPageCaption.checked = Boolean(settings.pageCaption);
+  $optAnimations.checked = Boolean(settings.animations);
+}
+
+function currentStyleFromUI() {
+  return {
+    appTexture: $optAppTexture.checked,
+    appGradient: $optAppGradient.checked,
+    pageAccent: $optPageAccent.checked,
+    pageRail: $optPageRail.checked,
+    pageShadow: $optPageShadow.checked,
+    pageCaption: $optPageCaption.checked,
+    animations: $optAnimations.checked,
+  };
+}
+
+function setStyleSettings(settings) {
+  applyStyleSettings(settings);
+  syncStyleUI(settings);
+  saveStyleSettings(settings);
+  renderAll();
 }
 
 function slugify(text) {
@@ -992,6 +1072,12 @@ window.addEventListener("keydown", (event) => {
   const tagName = document.activeElement?.tagName || "";
   if (tagName === "TEXTAREA" || tagName === "INPUT") return;
 
+  if (event.key === "Escape" && !$stylePanel.hidden) {
+    event.preventDefault();
+    $stylePanel.hidden = true;
+    return;
+  }
+
   if (event.key === "ArrowLeft") {
     event.preventDefault();
     goToPage(state.currentPageIndex - 1);
@@ -1001,6 +1087,54 @@ window.addEventListener("keydown", (event) => {
     event.preventDefault();
     goToPage(state.currentPageIndex + 1);
   }
+});
+
+function openStylePanel() {
+  $stylePanel.hidden = false;
+}
+
+function closeStylePanel() {
+  $stylePanel.hidden = true;
+}
+
+$btnStyle.addEventListener("click", () => {
+  openStylePanel();
+});
+
+$btnStyleClose.addEventListener("click", () => {
+  closeStylePanel();
+});
+
+$stylePanel.addEventListener("click", (event) => {
+  if (event.target === $stylePanel) closeStylePanel();
+});
+
+for (const opt of [
+  $optAppTexture,
+  $optAppGradient,
+  $optPageAccent,
+  $optPageRail,
+  $optPageShadow,
+  $optPageCaption,
+  $optAnimations,
+]) {
+  opt.addEventListener("change", () => {
+    setStyleSettings(currentStyleFromUI());
+  });
+}
+
+$btnStyleReset.addEventListener("click", () => {
+  setStyleSettings({ ...STYLE_DEFAULTS });
+});
+
+$btnStyleMinimal.addEventListener("click", () => {
+  setStyleSettings({
+    ...STYLE_DEFAULTS,
+    appTexture: false,
+    appGradient: false,
+    pageRail: false,
+    animations: false,
+  });
 });
 
 $input.value = `---
@@ -1052,4 +1186,5 @@ The existing pipes are failing. The opportunity is to build new ones.
 - **$4T**: Trapped pre-funding globally
 `;
 
+setStyleSettings(loadStyleSettings());
 renderAll();
