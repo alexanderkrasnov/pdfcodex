@@ -30,8 +30,6 @@ const $btnStyleReset = document.getElementById("btn-style-reset");
 const $btnStyleMinimal = document.getElementById("btn-style-minimal");
 const $optAppTexture = document.getElementById("opt-app-texture");
 const $optAppGradient = document.getElementById("opt-app-gradient");
-const $optPageAccent = document.getElementById("opt-page-accent");
-const $optPageRail = document.getElementById("opt-page-rail");
 const $optPageShadow = document.getElementById("opt-page-shadow");
 const $optPageCaption = document.getElementById("opt-page-caption");
 const $optAnimations = document.getElementById("opt-animations");
@@ -50,8 +48,6 @@ const STYLE_STORAGE_KEY = "pdfcodex.style.v1";
 const STYLE_DEFAULTS = Object.freeze({
   appTexture: true,
   appGradient: true,
-  pageAccent: true,
-  pageRail: true,
   pageShadow: true,
   pageCaption: true,
   animations: true,
@@ -101,8 +97,6 @@ function saveStyleSettings(settings) {
 function applyStyleSettings(settings) {
   document.body.classList.toggle("no-app-texture", !settings.appTexture);
   document.body.classList.toggle("no-app-gradient", !settings.appGradient);
-  document.body.classList.toggle("no-page-accent", !settings.pageAccent);
-  document.body.classList.toggle("no-page-rail", !settings.pageRail);
   document.body.classList.toggle("no-page-shadow", !settings.pageShadow);
   document.body.classList.toggle("no-page-caption", !settings.pageCaption);
   document.body.classList.toggle("no-animations", !settings.animations);
@@ -111,8 +105,6 @@ function applyStyleSettings(settings) {
 function syncStyleUI(settings) {
   $optAppTexture.checked = Boolean(settings.appTexture);
   $optAppGradient.checked = Boolean(settings.appGradient);
-  $optPageAccent.checked = Boolean(settings.pageAccent);
-  $optPageRail.checked = Boolean(settings.pageRail);
   $optPageShadow.checked = Boolean(settings.pageShadow);
   $optPageCaption.checked = Boolean(settings.pageCaption);
   $optAnimations.checked = Boolean(settings.animations);
@@ -122,8 +114,6 @@ function currentStyleFromUI() {
   return {
     appTexture: $optAppTexture.checked,
     appGradient: $optAppGradient.checked,
-    pageAccent: $optPageAccent.checked,
-    pageRail: $optPageRail.checked,
     pageShadow: $optPageShadow.checked,
     pageCaption: $optPageCaption.checked,
     animations: $optAnimations.checked,
@@ -842,22 +832,35 @@ function buildPageHtml(page, meta, pageNumber, totalPages) {
         : ""
       : page.lead || "";
 
+  const footerLeft = `
+    <span class="deck-footer__logo">
+      <img
+        class="deck-footer__logo-img"
+        src="./assets/remide-logo.svg"
+        alt="RemiDe"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+      />
+      <span class="deck-footer__logo-fallback">RemiDe</span>
+    </span>
+  `.trim();
+
+  const footerRight = `<span class="deck-footer__site">remide.xyz</span>`;
+
   return `
     <article class="deck-page deck-page--${page.kind}">
       <div class="deck-page__inner">
-        <div class="deck-page__meta">
-          <span class="deck-page__eyebrow">${escapeHtml(metaEyebrow(page))}</span>
-          <span class="deck-page__position">${escapeHtml(meta.date || todayISO())}</span>
-        </div>
         <header class="deck-page__header">
           <h1 class="deck-page__title">${escapeHtml(title)}</h1>
           ${subtitle ? `<p class="deck-page__subtitle">${inlineToHtml(subtitle)}</p>` : ""}
           ${lead ? `<p class="deck-page__lead">${inlineToHtml(lead)}</p>` : ""}
         </header>
         <div class="deck-page__body">${page.blocks.map(renderBlockHtml).join("")}</div>
-        <footer class="deck-page__footer">
-          <span class="deck-page__footer-title">${escapeHtml(footer)}</span>
-          <span>${pageNumber} / ${totalPages}</span>
+        <footer class="deck-footer">
+          <div class="deck-footer__border" aria-hidden="true"></div>
+          <div class="deck-footer__content">
+            ${footerLeft}
+            ${footerRight}
+          </div>
         </footer>
       </div>
     </article>
@@ -1112,8 +1115,6 @@ $stylePanel.addEventListener("click", (event) => {
 for (const opt of [
   $optAppTexture,
   $optAppGradient,
-  $optPageAccent,
-  $optPageRail,
   $optPageShadow,
   $optPageCaption,
   $optAnimations,
@@ -1132,7 +1133,6 @@ $btnStyleMinimal.addEventListener("click", () => {
     ...STYLE_DEFAULTS,
     appTexture: false,
     appGradient: false,
-    pageRail: false,
     animations: false,
   });
 });

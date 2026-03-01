@@ -58,8 +58,10 @@ The tool converts it into the new page-based format automatically. `Copy Normali
 ## Print / PDF behavior
 - Use `Print / Save as PDF`.
 - Every rendered page is printed with explicit page breaks.
-- The footer shows deterministic page numbering generated in the browser.
+- Footer matches the RemiDe deck template (logo left, `remide.xyz` right); page numbering is not shown.
 - This is browser-print output, not server-side PDF rendering.
+- To match the RemiDe deck style, enable **Background graphics** in the print dialog (Chrome).
+- Place `assets/remide-logo.svg` for the footer logo (otherwise it falls back to text).
 
 ## Limitations
 - Continuation pages split only between block boundaries.
